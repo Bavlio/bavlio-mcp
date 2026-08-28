@@ -96,6 +96,26 @@ The server implements the MCP authorization spec with OAuth 2.1, including Dynam
 2. It registers itself dynamically and opens a browser consent screen.
 3. You approve, and the client receives a scoped token bound to your Bavlio account and organization.
 
+The authorization server supports PKCE with `S256`, Dynamic Client Registration, and only the `authorization_code` and `refresh_token` grants.
+
+### Headless access with an API key
+
+For servers, cron jobs, and other non-interactive clients, you can send a `bav_live_` API key from your Bavlio dashboard as a bearer token instead of completing the OAuth flow:
+
+```json
+{
+  "mcpServers": {
+    "bavlio": {
+      "type": "http",
+      "url": "https://mcp.bavlio.com/mcp",
+      "headers": { "Authorization": "Bearer bav_live_your_key_here" }
+    }
+  }
+}
+```
+
+Treat the key like a password. It carries the same organization scope as your account.
+
 Every tool call is scoped to the organization of the signed-in user. Full detail: [docs/authentication.md](docs/authentication.md).
 
 ## Example configurations

@@ -31,6 +31,32 @@ https://mcp.bavlio.com/.well-known/oauth-protected-resource
 3. The client opens a browser consent screen. You sign in with your Bavlio account and approve the connection.
 4. The client receives an access token scoped to your user and organization.
 
+The authorization server supports PKCE with `S256`, Dynamic Client Registration, and only the `authorization_code` and `refresh_token` grants. The implicit and resource owner password grants are not offered.
+
+## Headless access with an API key
+
+Interactive OAuth is not practical for a server, a cron job, or a CI runner. For those, issue a `bav_live_` API key from your Bavlio dashboard and send it as a bearer token:
+
+```
+Authorization: Bearer bav_live_your_key_here
+```
+
+In an MCP client configuration that looks like:
+
+```json
+{
+  "mcpServers": {
+    "bavlio": {
+      "type": "http",
+      "url": "https://mcp.bavlio.com/mcp",
+      "headers": { "Authorization": "Bearer bav_live_your_key_here" }
+    }
+  }
+}
+```
+
+An API key carries the same organization scope as the account that issued it, and it does not expire on its own. Treat it like a password, keep it out of version control, and rotate it from the dashboard if it is exposed.
+
 ## Scoping
 
 Every tool call resolves the signed in user to an organization and filters all reads and writes to that organization. A token issued to one account can never read another account's campaigns, datasets, or inbox.
