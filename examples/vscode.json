@@ -1,0 +1,8 @@
+{
+  "servers": {
+    "bavlio": {
+      "type": "http",
+      "url": "https://mcp.bavlio.com/mcp"
+    }
+  }
+}

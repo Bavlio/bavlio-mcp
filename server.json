@@ -1,0 +1,18 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "com.bavlio/bavlio",
+  "title": "Bavlio",
+  "description": "B2B lead generation and sales outreach. Find leads by ICP, enrich contact data, build and launch personalized email and LinkedIn campaigns, and read replies.",
+  "version": "1.1.0",
+  "websiteUrl": "https://bavlio.com",
+  "repository": {
+    "url": "https://github.com/Bavlio/bavlio-mcp",
+    "source": "github"
+  },
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://mcp.bavlio.com/mcp"
+    }
+  ]
+}
