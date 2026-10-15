@@ -63,7 +63,7 @@ Each connected LinkedIn account runs under these caps by default:
 | Connection requests a day | 20 by default (an account can be set to 25 at most). The engine sends the lower of that and the weekly cap spread over the days the account sends: 20 a day sending Monday to Friday, 14 a day sending every day |
 | Connection requests per rolling 7 days | 100 |
 | Messages a day | 100 |
-| A newly connected account | Starts lower and ramps up over 14 days |
+| A newly connected account | Starts lower and ramps up over 21 days |
 
 A reply takes the person out of the sequence, and an opt-out blocks them on every channel. The full numbers and how pacing works: [LinkedIn automation limits](https://bavimail.com/blog/linkedin-automation-limits).
 
