@@ -206,10 +206,6 @@ See [examples/vscode.json](examples/vscode.json).
 
 Yes. The server operates on live account data, so it needs a Bavlio account to sign in to. We're not opening new accounts right now; join the waitlist at [bavlio.com/waitlist](https://bavlio.com/waitlist?utm_source=github&utm_medium=readme&utm_campaign=bavlio-mcp). Lead discovery and enrichment consume credits from your plan; reading campaigns, templates, inbox replies, and account state does not.
 
-### Only need email?
-
-[Bavimail](https://bavimail.com/?utm_source=github&utm_medium=readme&utm_campaign=bavlio-mcp), from the same team, has its own MCP server for email, [`@bavimail/mcp-server`](https://github.com/Bavlio/bavimail-mcp-server). It is open to anyone, with 12 tools for sending, inbound email, aliases and domains, and runs on a key from the free plan.
-
 ## Frequently asked questions
 
 ### Is this an MCP server for lead generation?
