@@ -12,6 +12,8 @@ It is a **remote** server. There is nothing to install, clone or run locally. Th
 
 ## Quick start
 
+These steps work for existing Bavlio customers. We're not opening new accounts right now; new users join the [waitlist](https://bavlio.com/waitlist?utm_source=github&utm_medium=readme&utm_campaign=bavlio-mcp).
+
 Add the server to Claude Code with one command:
 
 ```bash
@@ -58,7 +60,7 @@ Each connected LinkedIn account runs under these caps by default:
 
 | Limit | Value |
 | --- | --- |
-| Connection requests a day | 20 on a free account, 30 on Premium, 40 on Sales Navigator |
+| Connection requests a day | 20 by default (an account can be set to 25 at most). The engine sends the lower of that and the weekly cap spread over the days the account sends: 20 a day sending Monday to Friday, 14 a day sending every day |
 | Connection requests per rolling 7 days | 100 |
 | Messages a day | 100 |
 | A newly connected account | Starts lower and ramps up over 14 days |
@@ -202,7 +204,7 @@ See [examples/vscode.json](examples/vscode.json).
 
 ## Do I need a Bavlio account?
 
-Yes. The server operates on live account data, so it needs a Bavlio account to sign in to. New Bavlio accounts are closed while LinkedIn is in early access; join the waitlist at [bavlio.com/waitlist](https://bavlio.com/waitlist?utm_source=github&utm_medium=readme&utm_campaign=bavlio-mcp). Lead discovery and enrichment consume credits from your plan; reading campaigns, templates, inbox replies, and account state does not.
+Yes. The server operates on live account data, so it needs a Bavlio account to sign in to. We're not opening new accounts right now; join the waitlist at [bavlio.com/waitlist](https://bavlio.com/waitlist?utm_source=github&utm_medium=readme&utm_campaign=bavlio-mcp). Lead discovery and enrichment consume credits from your plan; reading campaigns, templates, inbox replies, and account state does not.
 
 ### Only need email?
 
@@ -224,7 +226,7 @@ Yes. This server sends connection requests with a note and follow-up messages as
 
 ### Can I send LinkedIn messages from Claude Code?
 
-Yes. Add the server with `claude mcp add --transport http bavlio https://mcp.bavlio.com/mcp`, sign in, and ask Claude Code to build and launch a campaign with a connection request and follow-up messages. Connecting the LinkedIn account itself is done once in the Bavlio dashboard, because it requires an interactive browser sign-in that an agent cannot complete.
+Yes, if you're an existing Bavlio customer. Add the server with `claude mcp add --transport http bavlio https://mcp.bavlio.com/mcp`, sign in, and ask Claude Code to build and launch a campaign with a connection request and follow-up messages. Connecting the LinkedIn account itself is done once in the Bavlio dashboard, because it requires an interactive browser sign-in that an agent cannot complete.
 
 ### Can an agent spend my credits without asking?
 
