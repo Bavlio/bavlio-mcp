@@ -1,16 +1,18 @@
-# Bavlio MCP Server
+# Bavlio MCP server: LinkedIn and email outreach for AI agents
 
-The Bavlio MCP server is a hosted [Model Context Protocol](https://modelcontextprotocol.io) server that gives AI assistants like Claude, ChatGPT, Cursor, and Codex direct access to B2B lead generation and sales outreach. It exposes 22 tools for finding leads, enriching contact data, building and launching multi-step email and LinkedIn campaigns, and reading replies, all against a live [Bavlio](https://bavlio.com) account.
-
-It is a **remote** server. There is nothing to install, clone, or run locally. You point your MCP client at one URL and sign in with OAuth.
+A hosted LinkedIn MCP server for Claude Code, Cursor, Claude Desktop, VS Code and any client that supports remote [Model Context Protocol](https://modelcontextprotocol.io). An agent sends LinkedIn connection requests with a note and follow-up messages as campaign steps, under per-account daily and weekly caps, and reads the LinkedIn inbox. The same campaigns can send email. 22 tools, one URL, OAuth sign-in:
 
 ```
 https://mcp.bavlio.com/mcp
 ```
 
-This repository is the public documentation and manifest for that server. The server itself is hosted by Bavlio and its source is not distributed.
+> **Status: early access.** The server runs today for existing [Bavlio](https://bavlio.com) customers. New accounts join the waitlist at [bavlio.com/waitlist](https://bavlio.com/waitlist?utm_source=github&utm_medium=readme&utm_campaign=bavlio-mcp).
+
+It is a **remote** server. There is nothing to install, clone or run locally. This repository is the public documentation and manifest for that server; the server is hosted by Bavlio and its source is not distributed.
 
 ## Quick start
+
+These steps work for existing Bavlio customers. We're not opening new accounts right now; new users join the [waitlist](https://bavlio.com/waitlist?utm_source=github&utm_medium=readme&utm_campaign=bavlio-mcp).
 
 Add the server to Claude Code with one command:
 
@@ -20,9 +22,58 @@ claude mcp add --transport http bavlio https://mcp.bavlio.com/mcp
 
 The first tool call opens a browser window for OAuth sign-in. After you approve, the connection persists.
 
+Cursor, in `~/.cursor/mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "bavlio": {
+      "type": "http",
+      "url": "https://mcp.bavlio.com/mcp"
+    }
+  }
+}
+```
+
 For other clients, see [Example configurations](#example-configurations) below.
 
-## What can an AI assistant do with Bavlio?
+## What can an agent do on LinkedIn?
+
+| Task | Tools |
+| --- | --- |
+| See your connected LinkedIn accounts and mailboxes | `bavlio_list_channels` |
+| Find people by role, company and market, with a cost quote first | `bavlio_plan_lead_search`, `bavlio_run_lead_search` |
+| Build a campaign: a connection request with a note, then follow-up messages | `bavlio_create_campaign`, `bavlio_set_campaign_sequence`, `bavlio_write_step_copy`, `bavlio_set_campaign_schedule` |
+| See the exact message one person will receive | `bavlio_preview_message` |
+| Launch, pause and resume | `bavlio_launch_campaign`, `bavlio_set_campaign_state` |
+| Read LinkedIn and email replies, and a full thread | `bavlio_list_inbox`, `bavlio_get_thread` |
+
+What it doesn't do:
+
+- Send a single message or connection request outside a campaign. Every send is a campaign step, so the caps and pacing below apply.
+- Connect a LinkedIn account. You do that once in the Bavlio dashboard, because it needs an interactive sign-in.
+- Reply to a LinkedIn message. Replies go through Bavlio's REST API (`POST /api/v1/linkedin/conversations/{chat_id}/reply`), not this server.
+
+## LinkedIn sending caps
+
+Each connected LinkedIn account runs under these caps by default:
+
+| Limit | Value |
+| --- | --- |
+| Connection requests a day | 20 by default (an account can be set to 25 at most). The engine sends the lower of that and the weekly cap spread over the days the account sends: 20 a day sending Monday to Friday, 14 a day sending every day |
+| Connection requests per rolling 7 days | 100 |
+| Messages a day | 100 |
+| A newly connected account | Starts lower and ramps up over 21 days |
+
+A reply takes the person out of the sequence, and an opt-out blocks them on every channel. The full numbers and how pacing works: [LinkedIn automation limits](https://bavimail.com/blog/linkedin-automation-limits).
+
+## Does LinkedIn have an official API for this?
+
+Not one every developer can use. LinkedIn's open permissions cover sign-in, the member's email address, and posting as that member. Sending messages and connection requests is not among them; other permissions need LinkedIn's approval through a partner program ([LinkedIn, on learn.microsoft.com](https://learn.microsoft.com/en-us/linkedin/shared/authentication/getting-access)). This server acts as your own connected account, under the caps above. LinkedIn's [User Agreement](https://www.linkedin.com/legal/user-agreement) prohibits unauthorized automated methods, so any tool that sends from a member account carries a risk of restriction, this one included. The caps keep each account's volume low.
+
+More on the REST side: [LinkedIn API for AI agents](https://bavimail.com/feature/linkedin-api).
+
+## What else can an assistant do with Bavlio?
 
 Once connected, an assistant can carry out a complete outbound workflow in conversation:
 
@@ -153,7 +204,11 @@ See [examples/vscode.json](examples/vscode.json).
 
 ## Do I need a Bavlio account?
 
-Yes. The server operates on live account data, so it requires a Bavlio account to sign in to. You can create one at [bavlio.com](https://bavlio.com). Lead discovery and enrichment consume credits from your plan; reading campaigns, templates, inbox replies, and account state does not.
+Yes. The server operates on live account data, so it needs a Bavlio account to sign in to. We're not opening new accounts right now; join the waitlist at [bavlio.com/waitlist](https://bavlio.com/waitlist?utm_source=github&utm_medium=readme&utm_campaign=bavlio-mcp). Lead discovery and enrichment consume credits from your plan; reading campaigns, templates, inbox replies, and account state does not.
+
+### Only need email?
+
+[Bavimail](https://bavimail.com/?utm_source=github&utm_medium=readme&utm_campaign=bavlio-mcp), from the same team, has its own MCP server for email, [`@bavimail/mcp-server`](https://github.com/Bavlio/bavimail-mcp-server). It is open to anyone, with 12 tools for sending, inbound email, aliases and domains, and runs on a key from the free plan.
 
 ## Frequently asked questions
 
@@ -165,9 +220,13 @@ Yes. Lead discovery is the primary use case. `bavlio_plan_lead_search` turns a p
 
 Yes. You can build a multi step email sequence, attach sending accounts, preview the rendered message for a real lead, and launch. Bavlio manages sending infrastructure, deliverability, and reply detection.
 
-### Does it support LinkedIn outreach?
+### Is there a LinkedIn MCP server that can send connection requests and messages?
 
-LinkedIn is one of the supported channels alongside email. `bavlio_list_inbox` and `bavlio_get_thread` cover LinkedIn replies, and campaigns can include LinkedIn steps where a LinkedIn account is connected. Connecting an account itself is done in the Bavlio dashboard, because it requires an interactive browser sign-in that an agent cannot complete.
+Yes. This server sends connection requests with a note and follow-up messages as campaign steps, paced under each account's caps, and reads LinkedIn replies with `bavlio_list_inbox` and `bavlio_get_thread`. It is in early access for existing Bavlio customers; new accounts join the waitlist.
+
+### Can I send LinkedIn messages from Claude Code?
+
+Yes, if you're an existing Bavlio customer. Add the server with `claude mcp add --transport http bavlio https://mcp.bavlio.com/mcp`, sign in, and ask Claude Code to build and launch a campaign with a connection request and follow-up messages. Connecting the LinkedIn account itself is done once in the Bavlio dashboard, because it requires an interactive browser sign-in that an agent cannot complete.
 
 ### Can an agent spend my credits without asking?
 
@@ -188,6 +247,9 @@ Common connection and authorization problems are covered in [docs/troubleshootin
 ## Links
 
 - Bavlio: <https://bavlio.com>
+- Waitlist: <https://bavlio.com/waitlist>
+- LinkedIn MCP server page: <https://bavimail.com/feature/linkedin-mcp-server>
+- LinkedIn automation limits: <https://bavimail.com/blog/linkedin-automation-limits>
 - MCP endpoint: <https://mcp.bavlio.com/mcp>
 - Official MCP Registry entry: `com.bavlio/bavlio`
 - Model Context Protocol: <https://modelcontextprotocol.io>
